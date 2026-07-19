@@ -101,7 +101,7 @@
     }
     </script>
 
-    <link rel="icon" type="image/png" href="/1.png">
+    <link rel="icon" type="image/png" href="1.png">
     <link rel="stylesheet" href="style.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -109,8 +109,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Sacramento&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="preloader"><div class="spinner"></div></div>
-    <div class="wellness-orb"></div>
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-lotus">
+                <svg viewBox="0 0 24 24" width="70" height="70" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="M12,21C12,21 7,16.5 7,12.5C7,8.5 12,3 12,3C12,3 17,8.5 17,12.5C17,16.5 12,21 12,21Z" />
+                    <path d="M12,21C12,21 3.5,18 3.5,13C3.5,8 12,3 12,3C12,3 20.5,8 20.5,13C20.5,18 12,21 12,21Z" opacity="0.5"/>
+                    <path d="M12,21C12,21 10,18.5 10,15C10,11.5 12,3 12,3C12,3 14,11.5 14,15C14,18.5 12,21 12,21Z" opacity="0.75"/>
+                </svg>
+            </div>
+            <p class="preloader-text">Nurturing Wellness...</p>
+        </div>
+    </div>
+    
+    <div class="ambient-glows" aria-hidden="true">
+        <div class="glow-bubble bubble-1"></div>
+        <div class="glow-bubble bubble-2"></div>
+        <div class="glow-bubble bubble-3"></div>
+    </div>
+
+    <div class="floating-botanicals" aria-hidden="true">
+        <div class="botanical leaf-1">
+            <svg viewBox="0 0 24 24" width="120" height="120" fill="none" stroke="currentColor" stroke-width="0.8">
+                <path d="M2,21c0,0,6-1,10-6c3.2-4,4-8.8,3.2-11.8c-0.2-0.8,0.7-1.3,1.3-0.8c3.2,2.8,4.7,8.2,2.5,12.6c-2.4,4.8-8.2,8-14.8,7.8C3.5,22.8,2.2,22.1,2,21z" />
+            </svg>
+        </div>
+        <div class="botanical leaf-2">
+            <svg viewBox="0 0 24 24" width="100" height="100" fill="none" stroke="currentColor" stroke-width="0.8">
+                <path d="M22,3c0,0-6,1-10,6c-3.2,4-4,8.8-3.2,11.8c0.2,0.8-0.7,1.3-1.3,0.8C4.3,18.8,2.8,13.4,5,9c2.4-4.8,8.2-8,14.8-7.8C20.5,1.2,21.8,1.9,22,3z" />
+            </svg>
+        </div>
+    </div>
+
     <button id="scrollToTopBtn" title="Go to top" aria-label="Scroll to top of page">↑</button>
     
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -130,12 +160,11 @@
             <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
             <ul>
                 <li><a href="#hero" class="active">Home</a></li>
-                <li><a href="#personal-note">My Note</a></li>
                 <li><a href="#about">About</a></li>
-                <li><a href="#approach">Approach</a></li>
+                <li><a href="#personal-note">My Note</a></li>
+                <li><a href="#dinacharya">Rhythms</a></li>
                 <li><a href="#services">Services</a></li>
                 <li><a href="#professional-journey">Journey</a></li>
-                <li><a href="#testimonials">Voices</a></li>
                 <li><a href="#faq">FAQ</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
@@ -143,7 +172,6 @@
     </nav>
 
     <header class="hero" id="hero">
-        <canvas id="constellation-canvas"></canvas>
         <div class="hero-content">
             <p class="greeting">Nurturing Wellness, Naturally</p>
             <h1>Dr. Nidhi Sanjay Patel <span class="credentials">(M.S.)</span></h1>
@@ -153,21 +181,7 @@
     </header>
 
     <main>
-        <section id="personal-note" class="container"> 
-            <div class="section-card">
-                 <h2 class="gradient-text-animated">A Personal Note on Healing</h2>
-                 <div class="section-divider"></div>
-                <div class="note-content">
-                    <span class="note-icon">“</span>
-                    <blockquote>
-                        <p>Welcome! I believe true healing blossoms from a place of understanding, compassion, and partnership. My deepest wish is for you to feel seen, heard, and empowered on your unique journey to well-being. Ayurveda offers us a profound lens to rediscover our body's innate wisdom and vitality. It's an honor to walk this path with you.</p>
-                        <footer>- Dr. Nidhi Patel</footer>
-                    </blockquote>
-                </div>
-            </div>
-        </section>
-
-        <section id="about" class="container">  
+        <section id="about" class="container">
             <div class="section-card">
                 <div class="about-flex">
                     <div class="profile-image-container">
@@ -197,7 +211,107 @@
                 </div>
             </div>
         </section>
-        
+
+        <section id="personal-note" class="container"> 
+            <div class="section-card">
+                 <h2 class="gradient-text-animated">A Personal Note on Healing</h2>
+                 <div class="section-divider"></div>
+                <div class="note-content">
+                    <span class="note-icon">“</span>
+                    <blockquote>
+                        <p>Welcome! I believe true healing blossoms from a place of understanding, compassion, and partnership. My deepest wish is for you to feel seen, heard, and empowered on your unique journey to well-being. Ayurveda offers us a profound lens to rediscover our body's innate wisdom and vitality. It's an honor to walk this path with you.</p>
+                        <footer>- Dr. Nidhi Patel</footer>
+                    </blockquote>
+                </div>
+            </div>
+        </section>
+
+        <section id="wellness-compass" class="container">
+            <div class="section-card compass-card">
+                <h2 class="gradient-text-animated">Your Wellness Compass</h2>
+                <div class="section-divider"></div>
+                <p class="compass-subtitle">Take a moment for yourself. Let us understand what your body and heart are asking for today, and find a gentle, nurturing path to balance.</p>
+                
+                <div class="compass-widget" id="compassWidget">
+                    <!-- Step 1 -->
+                    <div class="compass-step active" data-step="1">
+                        <span class="step-indicator">Step 1 of 3</span>
+                        <h3>How does your body feel today?</h3>
+                        <div class="compass-options">
+                            <button class="compass-option-btn" data-value="A">
+                                <span class="option-icon">🌸</span>
+                                <span class="option-title">Restless or Out of Cycle</span>
+                                <span class="option-desc">Dealing with hormonal shifts, irregular cycles, or anxiety.</span>
+                            </button>
+                            <button class="compass-option-btn" data-value="B">
+                                <span class="option-icon">🤰</span>
+                                <span class="option-title">Fatigued or Seeking Fertility</span>
+                                <span class="option-desc">Looking for conception support, pregnancy care, or general vitality.</span>
+                            </button>
+                            <button class="compass-option-btn" data-value="C">
+                                <span class="option-icon">🦋</span>
+                                <span class="option-title">Navigating Life Transitions</span>
+                                <span class="option-desc">Experiencing hot flashes, mood shifts, or menopause signs.</span>
+                            </button>
+                            <button class="compass-option-btn" data-value="D">
+                                <span class="option-icon">🌿</span>
+                                <span class="option-title">Heavy, Sluggish, or Bloated</span>
+                                <span class="option-desc">Feeling tired, congested, or seeking gentle renewal and detox.</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2 -->
+                    <div class="compass-step" data-step="2">
+                        <span class="step-indicator">Step 2 of 3</span>
+                        <h3>What is your heart seeking most?</h3>
+                        <div class="compass-options">
+                            <button class="compass-option-btn" data-value="A">
+                                <span class="option-icon">🕊️</span>
+                                <span class="option-title">Gentle Rhythm & Grounding</span>
+                                <span class="option-desc">Calming the mind, stabilizing routines, and finding inner peace.</span>
+                            </button>
+                            <button class="compass-option-btn" data-value="B">
+                                <span class="option-icon">🍵</span>
+                                <span class="option-title">Deep Nourishment & Strength</span>
+                                <span class="option-desc">Building cellular energy, restoring vitality, and physical support.</span>
+                            </button>
+                            <button class="compass-option-btn" data-value="C">
+                                <span class="option-icon">🌊</span>
+                                <span class="option-title">Cooling Relief & Comfort</span>
+                                <span class="option-desc">Soothing inflammation, releasing heat, and emotional ease.</span>
+                            </button>
+                            <button class="compass-option-btn" data-value="D">
+                                <span class="option-icon">✨</span>
+                                <span class="option-title">Lightness & Rejuvenation</span>
+                                <span class="option-desc">Clearing sluggishness, awakening metabolism, and inner energy.</span>
+                            </button>
+                        </div>
+                        <div class="compass-nav">
+                            <button class="back-btn">← Back</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Result -->
+                    <div class="compass-step" data-step="3">
+                        <span class="step-indicator">Your Path to Balance</span>
+                        <div class="compass-result" id="compassResult">
+                            <div class="result-flower">🌸</div>
+                            <h3 id="resultTitle">Rhythm & Calm</h3>
+                            <p id="resultText">Finding your advice...</p>
+                            <div class="result-footer">
+                                <p class="result-disclaimer">This guidance is rooted in classic Ayurvedic principles and is designed to support, not replace, direct medical care.</p>
+                                <div class="result-actions">
+                                    <a href="#contact" class="cta-button compass-cta">Discuss with Dr. Nidhi</a>
+                                    <button class="restart-btn">Try Again</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="approach" class="container"> 
             <div class="section-card">
                  <h2 class="gradient-text-animated">My Approach to Ayurvedic Women's Care</h2>
@@ -210,6 +324,142 @@
                     <li><strong>Empowerment Through Understanding:</strong> My goal is to equip you with knowledge about your body and Ayurvedic principles, empowering you to become an active architect of your own vibrant health and lasting vitality.</li>
                 </ul>
                 <p>From menarche to menopause and beyond, whether you seek support for specific conditions, fertility, pregnancy, or simply wish to enhance your overall wellness, I am here to walk alongside you, offering guidance that is both scientifically grounded and rich with the intuitive wisdom of Ayurveda.</p>
+            </div>
+        </section>
+
+        <section id="dinacharya" class="container">
+            <div class="section-card dinacharya-card">
+                <h2 class="gradient-text-animated">Daily Rhythms (Dinacharya)</h2>
+                <div class="section-divider"></div>
+                <p class="dinacharya-subtitle">Aligning your daily habits with nature's clock restores balance to your hormones and peace to your mind. Explore a recommended flow for Ayurvedic women's wellness:</p>
+                
+                <div class="dinacharya-widget">
+                    <div class="dinacharya-tabs" role="tablist" aria-label="Daily Ayurvedic Rhythms">
+                        <button class="dinacharya-tab-btn active" role="tab" aria-selected="true" aria-controls="rhythm-morning" id="tab-morning">
+                            <span class="tab-icon">🌅</span>
+                            <span class="tab-label">Morning</span>
+                        </button>
+                        <button class="dinacharya-tab-btn" role="tab" aria-selected="false" aria-controls="rhythm-midday" id="tab-midday">
+                            <span class="tab-icon">☀️</span>
+                            <span class="tab-label">Mid-Day</span>
+                        </button>
+                        <button class="dinacharya-tab-btn" role="tab" aria-selected="false" aria-controls="rhythm-evening" id="tab-evening">
+                            <span class="tab-icon">🌇</span>
+                            <span class="tab-label">Evening</span>
+                        </button>
+                        <button class="dinacharya-tab-btn" role="tab" aria-selected="false" aria-controls="rhythm-night" id="tab-night">
+                            <span class="tab-icon">🌙</span>
+                            <span class="tab-label">Night</span>
+                        </button>
+                        <div class="tab-indicator-pill"></div>
+                    </div>
+                    
+                    <div class="dinacharya-content-container">
+                        <!-- Morning Panel -->
+                        <div class="dinacharya-panel active" id="rhythm-morning" role="tabpanel" aria-labelledby="tab-morning">
+                            <div class="panel-layout">
+                                <div class="panel-info">
+                                    <h3>Morning (Brahma Muhurta)</h3>
+                                    <span class="time-tag">4:30 AM – 6:00 AM</span>
+                                    <p class="panel-desc">A sacred period when the atmosphere is charged with pure sattvic energy. Waking up during this time grounds your nervous system and boosts morning vitality.</p>
+                                    <ul class="practice-list">
+                                        <li><strong>Ushapan (Warm Water):</strong> Sip 1-2 cups of warm water to awaken your digestive fire (Agni) and cleanse the GI tract.</li>
+                                        <li><strong>Jihva Prakshalana (Tongue Scraping):</strong> Gently scrape the tongue to remove overnight toxins (Ama) and awaken your taste buds.</li>
+                                        <li><strong>Pranayama (Nadi Shodhana):</strong> Engage in 5-10 minutes of alternate nostril breathing to balance your Prana.</li>
+                                    </ul>
+                                </div>
+                                <div class="panel-graphic">
+                                    <div class="rhythm-circle morning-glow">
+                                        <svg viewBox="0 0 100 100" class="rhythm-svg">
+                                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="0.7" opacity="0.3"></circle>
+                                            <path d="M 50,5 A 45,45 0 0,1 95,50" fill="none" stroke="currentColor" stroke-width="2"></path>
+                                        </svg>
+                                        <span class="center-emoji">🌅</span>
+                                    </div>
+                                    <p class="doctor-tip"><strong>Dr. Nidhi's Wisdom:</strong> "Rising before the sun connects your biological clock to nature's natural rhythm, significantly stabilizing irregular hormonal cycles."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mid-Day Panel -->
+                        <div class="dinacharya-panel" id="rhythm-midday" role="tabpanel" aria-labelledby="tab-midday">
+                            <div class="panel-layout">
+                                <div class="panel-info">
+                                    <h3>Mid-Day (Agni & Focus)</h3>
+                                    <span class="time-tag">10:00 AM – 2:00 PM</span>
+                                    <p class="panel-desc">This is the Pitta time of day when the sun is at its highest and your internal digestive fire (Agni) is at its strongest. Make this your primary period of physical and mental work.</p>
+                                    <ul class="practice-list">
+                                        <li><strong>Enjoy Your Largest Meal:</strong> Consume your main, cooked meal between 12 PM and 1:30 PM, when your digestion can process it best.</li>
+                                        <li><strong>Mindful Eating:</strong> Avoid screens or stressful tasks while eating to prevent Pitta aggravation.</li>
+                                        <li><strong>Vajrasana (Thunderbolt Pose):</strong> Sit in Vajrasana for 5-10 minutes post-lunch to assist your digestive system.</li>
+                                    </ul>
+                                </div>
+                                <div class="panel-graphic">
+                                    <div class="rhythm-circle midday-glow">
+                                        <svg viewBox="0 0 100 100" class="rhythm-svg">
+                                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="0.7" opacity="0.3"></circle>
+                                            <path d="M 95,50 A 45,45 0 0,1 50,95" fill="none" stroke="currentColor" stroke-width="2"></path>
+                                        </svg>
+                                        <span class="center-emoji">☀️</span>
+                                    </div>
+                                    <p class="doctor-tip"><strong>Dr. Nidhi's Wisdom:</strong> "Your lunch should be warm, freshly prepared, and contain healthy fats like pure cow ghee to nourish the deep tissues."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Evening Panel -->
+                        <div class="dinacharya-panel" id="rhythm-evening" role="tabpanel" aria-labelledby="tab-evening">
+                            <div class="panel-layout">
+                                <div class="panel-info">
+                                    <h3>Evening (Wind Down)</h3>
+                                    <span class="time-tag">5:00 PM – 7:00 PM</span>
+                                    <p class="panel-desc">As the sun sets, the active Pitta phase gives way to Kapha, bringing a natural heavy, stabilizing energy. This is the time to release mental stress and prepare your body for rest.</p>
+                                    <ul class="practice-list">
+                                        <li><strong>Light Dinner:</strong> Consume a light, warm soup, stew, or grain dinner before 7 PM to prevent overnight metabolic heaviness (Ama).</li>
+                                        <li><strong>Gentle Movement:</strong> Take a soft walk (100 steps) after dinner to encourage blood flow without overstimulating the nervous system.</li>
+                                        <li><strong>Sip Herbal Tea:</strong> Warm chamomile, CCF (cumin-coriander-fennel), or ginger-tulsi tea helps ground Vata dosha.</li>
+                                    </ul>
+                                </div>
+                                <div class="panel-graphic">
+                                    <div class="rhythm-circle evening-glow">
+                                        <svg viewBox="0 0 100 100" class="rhythm-svg">
+                                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="0.7" opacity="0.3"></circle>
+                                            <path d="M 50,95 A 45,45 0 0,1 5,50" fill="none" stroke="currentColor" stroke-width="2"></path>
+                                        </svg>
+                                        <span class="center-emoji">🌇</span>
+                                    </div>
+                                    <p class="doctor-tip"><strong>Dr. Nidhi's Wisdom:</strong> "Eating dinner early is one of the most effective habits for relieving menstrual cramping and improving morning energy levels."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Night Panel -->
+                        <div class="dinacharya-panel" id="rhythm-night" role="tabpanel" aria-labelledby="tab-night">
+                            <div class="panel-layout">
+                                <div class="panel-info">
+                                    <h3>Night (Rejuvenate & Rest)</h3>
+                                    <span class="time-tag">9:00 PM – 10:00 PM</span>
+                                    <p class="panel-desc">Sleep is the ultimate Rasayana (rejuvenator). A restorative sleep between 10 PM and 2 AM allows the liver and blood to cleanse and regenerate hormones naturally.</p>
+                                    <ul class="practice-list">
+                                        <li><strong>Pada Abhyanga (Foot Massage):</strong> Massage the soles of your feet with warm sesame or castor oil to pull excess heat down and soothe the mind.</li>
+                                        <li><strong>Golden Milk:</strong> Sip warm milk with a pinch of turmeric, nutmeg, and cardamom to soothe Vata and induce deep sleep.</li>
+                                        <li><strong>Digital Detox:</strong> Turn off all screens by 9:00 PM to encourage the natural release of melatonin.</li>
+                                    </ul>
+                                </div>
+                                <div class="panel-graphic">
+                                    <div class="rhythm-circle night-glow">
+                                        <svg viewBox="0 0 100 100" class="rhythm-svg">
+                                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="0.7" opacity="0.3"></circle>
+                                            <path d="M 5,50 A 45,45 0 0,1 50,5" fill="none" stroke="currentColor" stroke-width="2"></path>
+                                        </svg>
+                                        <span class="center-emoji">🌙</span>
+                                    </div>
+                                    <p class="doctor-tip"><strong>Dr. Nidhi's Wisdom:</strong> "Quality sleep is the foundation of Ojas. A warm foot massage before bed acts as a powerful grounding practice for busy minds."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -256,6 +506,17 @@
                 <h3 style="margin-top: 2.5em;">Key Clinical Milestones</h3>
                 <div class="journey-map-container">
                     <div class="journey-map">
+                        <svg class="timeline-svg" aria-hidden="true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
+                            <path class="timeline-path-bg" stroke="rgba(224, 187, 228, 0.2)" stroke-width="3" fill="none" stroke-linecap="round"></path>
+                            <path class="timeline-path-active" stroke="url(#timeline-grad)" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+                            <defs>
+                                <linearGradient id="timeline-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#E0BBE4" />
+                                    <stop offset="50%" stop-color="#F8C8DC" />
+                                    <stop offset="100%" stop-color="#C0A062" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
                         <div class="journey-milestone">
                             <div class="milestone-icon-container">
                                 <svg class="milestone-icon svg-icon"><use xlink:href="#icon-training"></use></svg>
@@ -472,6 +733,9 @@
         </div>
     </footer>
 
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
     <script src="script.js" defer></script>
 </body>
 </html>
