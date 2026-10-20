@@ -7,3 +7,7 @@ publications/print/*-cover.pdf
 __pycache__/
 *.pyc
 _preview_pub.html
+
+# Deploy staging folder (the zip is committed)
+deploy/site/
+
