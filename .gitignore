@@ -1,0 +1,9 @@
+# Source archive — 7.2 GB of original working documents.
+# The published, open-access versions live in publications/files/ and ARE committed.
+newdata/
+
+# Build artefacts
+publications/print/*-cover.pdf
+__pycache__/
+*.pyc
+_preview_pub.html

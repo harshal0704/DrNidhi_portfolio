@@ -1,0 +1,30 @@
+# robots.txt for https://drnidhi.great-site.net
+User-agent: *
+Allow: /
+Disallow: /publications/print/
+
+# Crawl the whole publication library at a gentle pace.
+Crawl-delay: 1
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: SemanticScholarBot
+Allow: /
+
+User-agent: academic crawlers
+Allow: /
+
+Sitemap: https://drnidhi.great-site.net/sitemap.xml
