@@ -1,4 +1,4 @@
-/* This file has been refactored to a MOBILE-FIRST architecture.
+﻿/* This file has been refactored to a MOBILE-FIRST architecture.
 Base styles are for mobile, and min-width media queries add styles for larger screens.
 Theme, fonts, and colors are all preserved.
 Performance-intensive (commented-out) styles remain commented out for speed.
@@ -79,12 +79,17 @@ body::after {
 }
 
 .gradient-text-animated {
-    background: linear-gradient(70deg, var(--secondary-rose), var(--primary-pink), #B57EDC, var(--accent-gold));
-    background-size: 300% 100%; 
+    color: var(--logo-color);
+    background: linear-gradient(70deg, #7E4A60 0%, #8E5572 25%, #A85A7A 50%, #6D3F57 75%, #8E5572 100%);
+    background-size: 300% 100%;
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text; text-fill-color: transparent;
     display: inline-block; padding-bottom: 3px;
     animation: animateGradientText 8s ease-in-out infinite alternate;
+}
+/* If the browser cannot clip the background to the text, keep the heading readable. */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    .gradient-text-animated { background: none; -webkit-text-fill-color: var(--logo-color); color: var(--logo-color); }
 }
 @keyframes animateGradientText {
     0% { background-position: 0% 50%; }
@@ -112,7 +117,7 @@ h2 {
     border-bottom: 0; display: inline-block; 
     padding-bottom: 0; margin-bottom: 0.5em;
 }
-h3 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); color: #A06AB4; font-weight: 600; }
+h3 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); color: #8A4E8F; font-weight: 600; }
 
 /* Mobile-first p sizing */
 p { margin-bottom: 1.5em; font-size: 0.98rem; color: #573767; }
@@ -223,12 +228,14 @@ nav ul.open {
     top: calc(100% + 10px); 
     left: 0; 
     width: 100%; 
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
     background: rgba(253, 250, 246, 0.98); 
     backdrop-filter: blur(20px); 
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(197, 168, 128, 0.2); 
     border-radius: 24px; 
-    padding: 16px; 
+    padding: 14px 16px; 
     box-shadow: 0 15px 35px rgba(61, 38, 69, 0.1); 
     z-index: 999; 
     justify-content: center; 
@@ -265,9 +272,16 @@ nav ul li a.active { font-weight: 600; }
     cursor: pointer; 
     background: none; 
     border: none; 
-    padding: 5px; 
+    padding: 5px 8px; 
+    line-height: 1;
+    border-radius: 12px;
     z-index: 1001; 
 }
+.menu-toggle:focus-visible {
+    outline: 2px solid var(--primary-pink);
+    outline-offset: 2px;
+}
+.menu-icon { display: block; line-height: 1; }
 
 
 /* Hero Section */
@@ -390,6 +404,9 @@ section {
     transition: opacity 1.3s ease-out, transform 1.3s ease-out;
     position: relative; z-index: 1;
     will-change: transform, opacity;
+    /* Deep links from /writing/ arrive as /#about etc. The floating nav would
+       otherwise cover the heading. */
+    scroll-margin-top: 110px;
 }
 section.visible { opacity: 1; transform: translateY(0); }
  
@@ -1429,34 +1446,37 @@ section.visible .stagger-child { opacity: 1; transform: translateY(0); }
     }
 
     /* --- Navigation --- */
-    nav { 
+    nav {
         top: 25px;
         left: 50%;
         transform: translateX(-50%);
-        width: 90%;
-        max-width: 1100px;
-        padding: 12px 35px;
+        width: calc(100% - 48px);
+        max-width: 1180px;
+        padding: 10px 28px;
     }
     nav.scrolled {
         top: 12px;
-        padding: 8px 35px;
+        padding: 7px 28px;
     }
-    .nav-header-container { 
+    .nav-header-container {
         flex-direction: row; /* Desktop layout */
         justify-content: space-between;
         align-items: center;
         padding: 0;
+        gap: 28px;
     }
-    nav .logo-main-header { 
-        font-size: 2rem; /* Desktop size */
+    nav .logo-main-header {
+        font-size: 1.85rem; /* Desktop size */
         margin-bottom: 0; /* Desktop margin */
+        line-height: 1.1;
+        white-space: nowrap;
     }
-    .menu-toggle { 
+    .menu-toggle {
         display: none; /* Hide hamburger */
     }
     /* Show desktop nav list */
-    nav ul { 
-        display: flex; 
+    nav ul {
+        display: flex;
         flex-direction: row;
         position: static;
         width: auto;
@@ -1473,24 +1493,57 @@ section.visible .stagger-child { opacity: 1; transform: translateY(0); }
         flex-wrap: nowrap;
         animation: none;
         border-radius: 0;
+        gap: 2px;
     }
-    nav ul li { 
-        margin: 0 5px; /* Desktop margin */
+    nav ul li {
+        margin: 0;
         width: auto;
     }
     nav ul li a {
-        font-size: 0.95rem; /* Desktop size */
-        padding: 8px 16px; /* Desktop padding */
+        position: relative;
+        display: inline-block;
+        font-size: 0.92rem;
+        padding: 8px 13px;
         border-radius: 30px;
+        white-space: nowrap;
+        letter-spacing: 0.005em;
     }
+    /* The shared link underline and lift are for body copy; in a sticky bar they
+       make the row jitter. The pill is the affordance here. */
+    nav ul li a::after { display: none; }
     nav ul li a:hover {
         background: rgba(245, 230, 232, 0.4);
         color: var(--logo-color);
+        transform: none;
+        text-shadow: none;
     }
     nav ul li a.active {
         background: rgba(245, 230, 232, 0.75);
         color: var(--logo-color);
         font-weight: 600;
+    }
+    /* Writing is the only nav link that leaves the page, so it gets a gold dot:
+       a doorway, not another scroll target. */
+    nav ul li a.nav-writing {
+        padding-right: 27px;
+    }
+    nav ul li a.nav-writing::before {
+        content: '';
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        width: 5px;
+        height: 5px;
+        margin-top: -2.5px;
+        border-radius: 50%;
+        background: var(--accent-gold);
+        opacity: 0.8;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    nav ul li a.nav-writing:hover::before,
+    nav ul li a.nav-writing:focus-visible::before {
+        opacity: 1;
+        transform: scale(1.3);
     }
 
     /* --- Sections --- */
@@ -1795,4 +1848,143 @@ section.visible .stagger-child { opacity: 1; transform: translateY(0); }
 @media (max-width: 640px) {
     #publications .pub-stats { gap: 10px; }
     #publications .pub-stat { flex: 1 1 100%; }
+}
+
+/* ============================================================
+   READABILITY PASS
+   Longer line-height, larger body size, a comfortable measure
+   (line length) and clearer heading hierarchy.
+   ============================================================ */
+
+body {
+    font-size: 16.5px;
+    line-height: 1.82;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* Comfortable measure: no line of body copy should run too wide. */
+.section-card p,
+#about .about-text p,
+#approach p,
+#dinacharya p,
+#services p,
+#contact p,
+#faq .faq-answer p,
+.note-content p,
+blockquote p {
+    max-width: 66ch;
+}
+
+p {
+    font-size: 1.045rem;
+    line-height: 1.82;
+    margin-bottom: 1.15em;
+    color: #4A3355;
+}
+
+/* The opening line of a section reads slightly larger. */
+.lead,
+.section-card > p:first-of-type,
+#about .about-text > p:first-of-type {
+    font-size: 1.16rem;
+    line-height: 1.72;
+    color: var(--text-dark);
+}
+
+/* Paragraphs that follow a heading should sit a little closer to it. */
+h2 + .section-divider + p,
+h2 + p,
+h3 + p { margin-top: 0.15em; }
+
+h1, h2, h3, h4 {
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+}
+
+h2 {
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+    line-height: 1.22;
+    margin-bottom: 0.35em;
+}
+
+h3 {
+    font-size: clamp(1.16rem, 2.2vw, 1.38rem);
+    line-height: 1.38;
+    margin-bottom: 0.5em;
+}
+
+h4 { font-size: 1.1rem; line-height: 1.4; }
+
+/* A short standfirst under a heading. */
+.section-intro {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-soft);
+    max-width: 62ch;
+    margin-bottom: 1.6em;
+}
+
+/* Lists read better with breathing room and a clear marker. */
+.section-card ul,
+.section-card ol {
+    max-width: 68ch;
+    padding-left: 1.35em;
+}
+.section-card li { margin-bottom: 0.7em; line-height: 1.75; }
+.section-card li::marker { color: var(--accent-gold); }
+
+.section-card ul li strong,
+#about .about-text ul li strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+/* Glossary: a Sanskrit term with its plain-English meaning. */
+.term {
+    white-space: nowrap;
+}
+.term + .gloss,
+.gloss {
+    color: var(--text-soft);
+    font-weight: 300;
+}
+
+/* Small print for supporting detail. */
+.fine-print {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--text-soft);
+}
+
+/* A plain-language note that sits inside a card. */
+.plain-note {
+    background: rgba(245, 230, 232, 0.42);
+    border-left: 3px solid var(--accent-gold);
+    border-radius: 0 14px 14px 0;
+    padding: 16px 20px;
+    margin: 1.4em 0;
+    max-width: 66ch;
+    font-size: 0.97rem;
+    line-height: 1.75;
+    color: #4A3355;
+}
+.plain-note strong { color: var(--text-dark); }
+
+/* FAQ answers: slightly larger and roomier. */
+.faq-answer p { font-size: 1.02rem; line-height: 1.8; margin-bottom: 0.9em; }
+.faq-answer p:last-child { margin-bottom: 0; }
+
+/* Doctor tip: make it look like spoken advice, not a slogan. */
+.doctor-tip {
+    font-size: 0.97rem;
+    line-height: 1.7;
+    font-style: normal;
+}
+
+/* Service items: allow a bit more room for the text. */
+.service-item p { font-size: 0.97rem; line-height: 1.72; }
+
+@media (max-width: 768px) {
+    body { font-size: 16px; }
+    p { font-size: 1rem; }
 }

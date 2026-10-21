@@ -1,9 +1,11 @@
 ﻿# -*- coding: utf-8 -*-
 """
-Validates the generated publications site.
+Validates the generated site and its publications sub-site.
 
 Checks: JSON-LD validity, tag balance, internal link targets, XML well-formedness,
-catalogue consistency, PDF presence, and that every work has the metadata a platform needs.
+catalogue consistency, PDF presence, that every work has the metadata a platform
+needs, that every page points at the canonical host, and that every header nav
+item resolves to a real section or page.
 
     py writing/verify.py
 """
@@ -17,7 +19,8 @@ from catalog import WORKS, AUTHOR
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PUB = os.path.join(ROOT, "writing")
 FILES = os.path.join(PUB, "files")
-SITE = "https://drnidhi.great-site.net"
+SITE = "https://www.drnidhi.net"
+RETIRED = "great-site.net"
 
 errors, warnings = [], []
 
@@ -122,6 +125,42 @@ def main():
         if not os.path.exists(p) or os.path.getsize(p) < 100:
             err(f"upload kit: missing or empty {f}")
     print("   kit files present")
+
+    print("== checking canonical host ==")
+    for p in pages:
+        if not os.path.exists(p):
+            continue
+        rel = os.path.relpath(p, ROOT)
+        src = open(p, encoding="utf-8").read()
+        if RETIRED in src:
+            err(f"{rel}: still references the retired host ({RETIRED})")
+        m = re.search(r'<link rel="canonical" href="([^"]+)"', src)
+        if m and not m.group(1).startswith(SITE):
+            err(f"{rel}: canonical is {m.group(1)} - expected a {SITE} URL")
+    print(f"   canonical host is {SITE}")
+
+    print("== checking header navigation ==")
+    home_p = os.path.join(ROOT, "index.html")
+    if os.path.exists(home_p):
+        home = open(home_p, encoding="utf-8").read()
+        block = re.search(r'<ul id="mainNavList">(.*?)</ul>', home, re.S)
+        if not block:
+            err("home: #mainNavList not found - the header nav is missing")
+        else:
+            items = re.findall(r'<a href="([^"]+)"[^>]*>([^<]+)</a>', block.group(1))
+            if not items:
+                err("home: header nav has no links")
+            for href, label in items:
+                if href.startswith("#"):
+                    if f'id="{href[1:]}"' not in home:
+                        err(f"home: nav '{label}' points at {href} but no such id exists")
+                elif href.startswith(("http", "mailto:", "tel:")):
+                    continue
+                elif not os.path.exists(os.path.normpath(os.path.join(ROOT, href))):
+                    err(f"home: nav '{label}' points at {href} which does not exist")
+            if not any(h.rstrip("/").endswith("writing") for h, _ in items):
+                err("home: header nav has no link to writing/ - the tab would be unreachable")
+            print(f"   {len(items)} nav items, all targets resolve")
 
     print("== checking sitemap coverage ==")
     sm = open(os.path.join(ROOT, "sitemap.xml"), encoding="utf-8").read()

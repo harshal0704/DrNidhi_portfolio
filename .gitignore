@@ -1,18 +1,20 @@
 # Source archive — 7.2 GB of original working documents.
-# The published, open-access versions live in publications/files/ and ARE committed.
+# The published, open-access versions live in writing/files/ and ARE committed.
 newdata/
 
 # Build artefacts
-publications/print/*-cover.pdf
+writing/print/*-cover.pdf
 __pycache__/
 *.pyc
 _preview_pub.html
+_preview_root.html
+_preview_sections.html
 
 # Secrets — never commit
 .zenodo-token
 .osf-token
 .env
 
-# Deploy staging folder (the zip is committed)
+# Deploy staging folder and the portable bundle (regenerate with build_deploy.py --zip)
 deploy/site/
-
+deploy/*.zip

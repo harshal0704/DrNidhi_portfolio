@@ -3,9 +3,10 @@
 Personal website and academic publication record of **Dr. Nidhi Sanjay Patel** (B.A.M.S., M.S. Ayurveda —
 Prasuti Tantra & Stree Roga), Assistant Professor at Uka Tarsadia University (UTU), Bardoli, Gujarat.
 
-Live site: **https://www.drnidhi.net/**
+**Live site: <https://www.drnidhi.net/>** — static HTML, CSS and JavaScript, deployed by Vercel from this
+repository. `drnidhi.net` redirects to `www`, which is the canonical host on every page.
 
-![Alt text describing the image](./web.png)
+![The home page](./web.png)
 
 ---
 
@@ -13,41 +14,38 @@ Live site: **https://www.drnidhi.net/**
 
 | Path | What it is |
 |---|---|
-| `index.html` | The single-page website. Also carries the `Person` JSON-LD and the Publications preview block. |
-| `style.css` | Site styles (plus the `#publications` block styles). |
-| `script.js` | Navigation, scroll-reveal, compass widget, dinacharya tabs, FAQ. |
-| `writing/` | The full publication library — see below. |
+| `index.html` | The single-page website: hero, about, personal note, services, journey, publications preview, FAQ, contact. Carries the `Person` JSON-LD. |
+| `style.css` | All site styles. |
+| `script.js` | Navigation, scroll reveal, compass widget, dinacharya tabs, FAQ. |
+| `writing/` | The publications library — a self-contained sub-site. See below. |
 | `sitemap.xml` | XML sitemap, 22 URLs. |
 | `robots.txt` | Allows search engines, AI answer engines and academic crawlers. |
 | `rss.xml` | RSS feed of the publication record. |
-| `newdata/` | **Source material** (7.2 GB of original documents). *Not committed* — it is the working archive the publications were built from. |
+| `writing/upload-kit/` | Ready-to-paste metadata for every external platform. |
+| `newdata/` | **Source material** (7.2 GB of original documents). *Not committed* — the working archive the publications were built from. |
 
 ---
 
-## The Publications library
+## The Writing library
 
-`writing/` is a complete, self-contained open-access publication site. Every work authored
-or presented by Dr. Nidhi Patel is published there in full, with metadata, citations and a
-downloadable PDF.
+`writing/` is a complete, self-contained open-access publication site. Every work authored or presented by
+Dr. Nidhi Patel is published there in full, with metadata, citations and a downloadable PDF.
 
 ```
 writing/
-├── index.html            Landing page — searchable, filterable catalogue
-├── library.json          Machine-readable catalogue of all 20 works
-├── <slug>.html           One page per work (20 pages)
-├── assets/
-│   ├── pub.css           Styles for the publications pages
-│   └── pub.js            Search + type filter
-├── files/
-│   ├── <slug>.pdf        Open-access PDF: title page + abstract + full text + citations
-│   └── <slug>-source.*   The original document as submitted
-├── print/                Print templates used to generate the PDFs
-├── upload-kit/           Ready-to-paste metadata for every external platform
-├── catalog.py            The single source of truth for the catalogue
-├── build.py              Generates the pages, PDFs, sitemap, robots, RSS
-├── build_kit.py          Generates the upload kit
+├── index.html            searchable, filterable catalogue
+├── library.json          machine-readable catalogue of all 20 works
+├── <slug>.html           one page per work (20 pages)
+├── assets/               pub.css, pub.js
+├── files/                open-access PDF + the original document, per work
+├── print/                print templates used to generate the PDFs
+├── upload-kit/           ready-to-paste metadata for every external platform
+├── catalog.py            the single source of truth for the catalogue
+├── build.py              generates the pages, PDFs, sitemap, robots, RSS
+├── build_kit.py          generates the upload kit
+├── build_deploy.py       writes deploy/DEPLOY.md (and a portable zip on request)
 ├── extractor.py          DOCX/PPTX/PDF text extraction
-└── verify.py             Validation — run this after any change
+└── verify.py             validation — run this after any change
 ```
 
 ### The catalogue
@@ -61,46 +59,55 @@ writing/
 | Conference abstracts | 4 | Panchakarma in Vandhyatwa; Preconceptional Care; Role of Uttarbasti in Yonivyapada; Ayurveda for Public Health |
 | Seminar presentations | 13 | Pathya, Rasa, Sadarasa, Vomiting in Pregnancy, Stages of Labour, Epilepsy in Pregnancy, GDM, Artava Kshaya, Delivery of IUGR, Abnormal Development of Fallopian Tube and Ovary, Applied Anatomy of the Abdomen, Prasava Vigyana, Dinacharya & Immunity |
 
-Material belonging to other doctors and colleagues is deliberately excluded, as are all patient
-records, admission letters, score cards and other personal documents.
+Material belonging to other doctors and colleagues is deliberately excluded, as are all patient records,
+admission letters, score cards and other personal documents.
 
 ### Rebuilding
 
 ```bash
-py writing/build.py       # pages, PDFs, sitemap.xml, robots.txt, rss.xml, index.html patch
-py writing/build_kit.py   # upload-kit/ (CSV per platform + guides)
-py writing/verify.py      # validation — should report 0 errors
+py writing/build.py          # pages, PDFs, sitemap.xml, robots.txt, rss.xml, index.html patch
+py writing/build_kit.py      # upload-kit/ (CSV per platform + guides)
+py writing/build_deploy.py   # deploy/DEPLOY.md
+py writing/verify.py         # validation — should report 0 errors
 ```
 
 Requires Python 3, `pypdf` (`py -m pip install pypdf`) and Google Chrome (for PDF rendering).
 
+`verify.py` is the gate. It checks JSON-LD, tag balance, every internal link target, XML well-formedness,
+catalogue consistency, PDF presence, that no page still points at the retired host, and that every header
+nav item resolves to a real section or page.
+
 ### Upload kit
 
-`writing/upload-kit/` contains everything needed to publish the same work on other
-platforms, with the exact title, abstract, keywords, description and citation for each:
+`writing/upload-kit/` contains everything needed to publish the same work on other platforms, with the
+exact title, abstract, keywords, description and citation for each:
 
 | File | What it gives you |
 |---|---|
-| `MASTER-UPLOAD-PLAN.md` | **Start here.** Every platform with its live signup/upload link, ranked by impact, plus the patient-facing track, the mistakes to avoid and a 14-day sprint |
-| `upload-console.html` | Open in a browser: every field with a copy button, one tab per platform, progress saved locally |
-| `TRACKER.csv` | 105 individual upload actions with status, public URL and DOI columns |
-| `PROFILE-COPY.md` | Bios at every character limit, service descriptions, FAQ, review-request scripts, social bios, post ideas |
-| `zenodo_deposit.py` | Bulk deposit to Zenodo and mint DOIs (`--dry-run` first, `--publish` to mint) |
-| `osf_deposit.py` | Create an OSF project and upload all 20 PDFs (`--publish` to make it public) |
-| `GOOGLE-BUSINESS-PROFILE.md` | The patient-acquisition setup: claiming/creating the listing, copy-paste fields, photos, verification, review script |
-| `UPLOAD-GUIDE.md` | Step-by-step instructions for each academic platform, in the right order |
-| `ORDER-RECOMMENDATION.md` | Which work to upload first, and which audience each platform reaches |
-| `HOOKS.md` | The hook strategy — content hooks, technical hooks, citation hooks, link hooks, and how to measure them |
-| `MANIFEST.json` | Every work, every platform field, machine-readable |
-| `researchgate.csv` `academia.csv` `academia_india.csv` `scribd.csv` `slideshare.csv` `zenodo.csv` `osf.csv` `scholar.csv` `doaj.csv` | One row per work, ready to paste |
+| `MASTER-UPLOAD-PLAN.md` | The whole route: which platform, in what order, and why. |
+| `UPLOAD-GUIDE.md` | Step-by-step instructions for each platform. |
+| `ORDER-RECOMMENDATION.md` | Which work to upload first, and which audience each platform reaches. |
+| `HOOKS.md` | The hook strategy — content, technical, citation and link hooks. |
+| `PROFILE-COPY.md` | Bio and profile text for each platform. |
+| `MANIFEST.json` | Every work, every platform field, machine-readable. |
+| `upload-console.html` | Click-to-copy version of the manifest, with progress tracking. |
+| `TRACKER.csv` | The audit trail: fill in the public URL as you upload. |
+| `researchgate.csv` `academia.csv` `academia_india.csv` `scribd.csv` `slideshare.csv` `zenodo.csv` `osf.csv` `scholar.csv` `doaj.csv` | One row per work, ready to paste. |
 
-Fill in the `Public URL (after upload)` column as you go, so the kit stays auditable.
+Every description in the kit ends with the work's canonical `https://www.drnidhi.net/writing/...` URL, so
+each external copy cites the original. Fill in the `Public URL (after upload)` column as you go.
 
-Regenerate the console and tracker after any catalogue change:
+---
 
-```bash
-py writing/build_console.py
-```
+## Header navigation
+
+The header is a single sticky row: **Home · About · My Note · Services · Writing · FAQ · Contact**.
+
+`Writing` is the only item that leaves the home page, so it carries a gold dot. The `Rhythms` and `Journey`
+sections still exist on the page; they were removed from the header because nine items overflowed the bar.
+
+Sections carry `scroll-margin-top`, so deep links such as `https://www.drnidhi.net/#about` (used by the
+publications sub-site) land below the floating nav instead of behind it.
 
 ---
 
@@ -118,5 +125,11 @@ py writing/build_console.py
 
 ## Stack
 
-Vanilla HTML, CSS and JavaScript. No build step for the site itself — `writing/build.py` is a
-one-off content pipeline, not a bundler.
+Vanilla HTML, CSS and JavaScript. No bundler, no framework, no runtime dependencies. The Python scripts in
+`writing/` are a one-off content pipeline, not part of the site.
+
+## Deployment
+
+Pushing to the default branch is the deploy — Vercel builds the static site and serves it at
+`https://www.drnidhi.net`. Details, DNS records and the post-deploy check list are in
+[`deploy/DEPLOY.md`](deploy/DEPLOY.md).

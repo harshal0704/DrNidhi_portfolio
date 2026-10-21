@@ -241,7 +241,7 @@ Two rules that matter more than anything else:
 
 1. **Upload the open-access PDF first** (`writing/files/<slug>.pdf`). It already contains the
    title page, the abstract, the full text and the citation block. It is the same file that is
-   live on `drnidhi.great-site.net`, so the two never drift apart.
+   live on `www.drnidhi.net`, so the two never drift apart.
 2. **Put the canonical URL in the description of every upload.** Every platform makes the
    description crawlable, and the canonical URL is what passes the citation back to the author's
    own site. This is the single most valuable line in each row.
@@ -313,7 +313,7 @@ of the same CSV. That column is what makes the kit reusable and auditable.
 ### Google Scholar
 - Create a **public profile** (not a verified one — verification is optional and slow).
 - Add each work: title, publication type, year, authors, keywords, and the abstract.
-- In the **link** field use `https://drnidhi.great-site.net/writing/files/<slug>.pdf`
+- In the **link** field use `https://www.drnidhi.net/writing/files/<slug>.pdf`
   so Google indexes the open-access copy and shows the green `[PDF]` marker.
 - This is what makes the works citable, and it is where the citation count accumulates.
 
@@ -514,7 +514,7 @@ is also a working internal link rather than a dead label.
 
 | Check | Where | What good looks like |
 |---|---|---|
-| Indexing | Google `site:drnidhi.great-site.net` | All 22 URLs listed, within days of publishing. |
+| Indexing | Google `site:www.drnidhi.net` | All 22 URLs listed, within days of publishing. |
 | Rich result | Google Search Console → Enhancements | The publication pages show as academic content, not just blue links. |
 | Structured data | search.google.com/test/rich-results | No errors on `ScholarlyArticle`, `BreadcrumbList`, `Person` or `ItemList`. |
 | Citations | Google Scholar profile | The works listed with `[PDF]` markers, and the citation count rising over the following months. |

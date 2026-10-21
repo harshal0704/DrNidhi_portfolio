@@ -1,21 +1,19 @@
 ﻿# -*- coding: utf-8 -*-
 """
-Builds a ready-to-upload package for the InfinityFree web host that serves
-drnidhi.great-site.net.
+Writes the deployment guide, and optionally a portable bundle.
 
-The live site is hosted on InfinityFree (great-site.net is InfinityFree's free
-domain), not on GitHub Pages — so the files have to be copied into the account's
-web root. This produces a clean folder tree and a zip that can be dropped in.
+The site is a static document set served from **https://www.drnidhi.net**.
+It deploys from this repository (Vercel watches the default branch), so pushing
+is the deploy — there is nothing to copy by hand.
 
-    deploy/                 <- copy the CONTENTS of this into the web root
-    deploy/DrNidhi_deploy.zip
-    deploy/DEPLOY.md
+    py writing/build_deploy.py          # refresh deploy/DEPLOY.md only
+    py writing/build_deploy.py --zip    # also build deploy/site + DrNidhi_deploy.zip
+
+The zip is a build artefact for offline copies and never needs to be committed.
+The old InfinityFree host (drnidhi.great-site.net) is retired; its instructions
+were removed because the host no longer answers.
 """
-import os, shutil, zipfile, sys, datetime
-
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-from catalog import WORKS
+import os, shutil, zipfile, sys
 
 ROOT = r"C:\Users\nidhi\harshal\DrNidhi_portfolio"
 OUT = os.path.join(ROOT, "deploy")
@@ -24,6 +22,8 @@ STAGE = os.path.join(OUT, "site")
 ROOT_FILES = ["index.html", "style.css", "script.js", "robots.txt", "rss.xml", "sitemap.xml",
               "1.png", "dr-nidhi-patel-profile.jpg", "web.png"]
 SKIP_DIRS = {"print", "upload-kit", "__pycache__"}
+
+SITE = "https://www.drnidhi.net"
 
 
 def copy_tree(src, dst, skip=()):
@@ -42,113 +42,111 @@ def copy_tree(src, dst, skip=()):
             shutil.copy2(os.path.join(dp, n), os.path.join(target, n))
 
 
-DEPLOY_MD = r"""# Deploying to drnidhi.great-site.net
+DEPLOY_MD = r"""# Deploying drnidhi.net
 
-`drnidhi.great-site.net` is free shared hosting provided by **InfinityFree** (the
-`great-site.net` domain belongs to InfinityFree). It is *not* served from GitHub Pages,
-so pushing to GitHub does not change the live site — the files have to be copied into the
-hosting account's web root.
+The site is static HTML, CSS and JavaScript. It is served at
+**https://www.drnidhi.net** by **Vercel**, which builds from this repository on
+every push to the default branch.
 
-## What to upload
+**Pushing is the deploy.** There is no file manager, no FTP, no zip to copy.
+The old InfinityFree host (`drnidhi.great-site.net`) is retired — it no longer
+answers, and every canonical URL now points at `www.drnidhi.net`.
 
-Everything in the `site/` folder next to this file. Its contents are the finished site:
+## What makes up the site
 
 ```
-site/
-├── index.html                     home page (now includes the Publications block)
-├── style.css
-├── script.js
-├── robots.txt                     allows search, AI and academic crawlers
-├── rss.xml                        RSS feed of the publication record
-├── sitemap.xml                    22 URLs
-├── 1.png, dr-nidhi-patel-profile.jpg, web.png
-└── writing/
-    ├── index.html                 searchable catalogue
-    ├── library.json               machine-readable catalogue
-    ├── <slug>.html                20 work pages
-    ├── assets/                    pub.css, pub.js
-    └── files/                     open-access PDFs + the original documents
+index.html                  home page (hero, about, note, services, journey, publications, FAQ, contact)
+style.css                   all site styles
+script.js                   nav, scroll reveal, compass, dinacharya tabs, FAQ
+robots.txt                  allows search, AI and academic crawlers
+sitemap.xml                 22 URLs
+rss.xml                     RSS feed of the publication record
+1.png, dr-nidhi-patel-profile.jpg, web.png
+writing/                    the publications sub-site
+    index.html              searchable, filterable catalogue
+    library.json            machine-readable catalogue of all 20 works
+    <slug>.html             one page per work (20)
+    assets/                 pub.css, pub.js
+    files/                  open-access PDFs + the original documents
 ```
 
-(`writing/print/` and `writing/upload-kit/` are deliberately left out — they are
-build and working files, not web content.)
+`writing/print/` and `writing/upload-kit/` are build and working files. They stay
+in the repository but are not part of the public site.
 
-## How to upload — choose one
+## The deploy
 
-### Option A — the InfinityFree control panel (easiest)
+1. `git push` the default branch.
+2. Vercel builds and promotes the deployment automatically (roughly 30 seconds).
+3. Open <https://www.drnidhi.net/> and hard-refresh once to clear the old CSS.
 
-1. Sign in at <https://dash.infinityfree.com>.
-2. Open **Control Panel → Website → File Manager** (or the online file manager / FTP link).
-3. Open the web root — usually `htdocs`.
-4. Upload the contents of `site/`. Two ways:
-   - upload `DrNidhi_deploy.zip`, then right-click it in the file manager and choose **Extract**; or
-   - upload the folders and files individually, keeping the same names.
-5. Confirm the file names are exactly `index.html` (not `index.html.txt`) — Windows
-   Notepad and some browsers add `.txt`. Delete any stray `.txt` duplicates.
-6. Visit <https://drnidhi.great-site.net/> and <https://drnidhi.great-site.net/writing/>.
+If a push does not appear live, check the Vercel dashboard for the project's
+latest deployment — a failed build is almost always a missing file, not a
+hosting problem.
 
-### Option B — FTP (fastest for ~25 MB)
+## DNS
 
-InfinityFree gives FTP details on the control panel under **Account → FTP Accounts**.
+`drnidhi.net` and `www.drnidhi.net` both point at Vercel:
 
-```powershell
-# from the folder that contains `site\`
-curl.exe --ftp-create-dirs -T "site\index.html"            ftp://YOURUSER:YOURPASSWORD@ftp.infinityfree.com/htdocs/index.html
-curl.exe --ftp-create-dirs -T "site\style.css"             ftp://YOURUSER:YOURPASSWORD@ftp.infinityfree.com/htdocs/style.css
-curl.exe --ftp-create-dirs -T "site\script.js"             ftp://YOURUSER:YOURPASSWORD@ftp.infinityfree.com/htdocs/script.js
-curl.exe --ftp-create-dirs -T "site\robots.txt"            ftp://YOURUSER:YOURPASSWORD@ftp.infinityfree.com/htdocs/robots.txt
-curl.exe --ftp-create-dirs -T "site\rss.xml"               ftp://YOURUSER:YOURPASSWORD@ftp.infinityfree.com/htdocs/rss.xml
-curl.exe --ftp-create-dirs -T "site\sitemap.xml"           ftp://YOURUSER:YOURPASSWORD@ftp.infinityfree.com/htdocs/sitemap.xml
-curl.exe --ftp-create-dirs -T "site\1.png"                 ftp://YOURUSER:YOURPASSWORD@ftp.infinityfree.com/htdocs/1.png
-curl.exe --ftp-create-dirs -T "site\dr-nidhi-patel-profile.jpg" ftp://YOURUSER:YOURPASSWORD@ftp.infinityfree.com/htdocs/dr-nidhi-patel-profile.jpg
-curl.exe --ftp-create-dirs -T "site\web.png"               ftp://YOURUSER:YOURPASSWORD@ftp.infinityfree.com/htdocs/web.png
-```
+| Record | Name | Value |
+|---|---|---|
+| A | `@` | the two Vercel apex addresses shown in the dashboard |
+| CNAME | `www` | `cname.vercel-dns.com` |
 
-Then the `publications` folder — upload the tree with any FTP client (FileZilla, WinSCP),
-because there are 60+ files:
+The apex redirects to `www`, which is the canonical host used by every page's
+`<link rel="canonical">`, the sitemap and the RSS feed.
 
-```powershell
-# from inside site\
-lftp -u YOURUSER,YOURPASSWORD ftp.infinityfree.com -e "mirror -R publications /htdocs/publications; bye"
-```
+## After a deploy — the check list
 
-Or with WinSCP: protocol **FTP**, host **ftp.infinityfree.com**, port **21**, log in with the
-FTP account from the control panel, drag `site\\publications` into `/htdocs/`.
+1. Every URL below returns 200:
 
-## After the upload — the six things that make it work
-
-1. **Test every URL** — the home page, `/writing/`, one work page, and one PDF:
    ```
-   https://drnidhi.great-site.net/
-   https://drnidhi.great-site.net/writing/
-   https://drnidhi.great-site.net/writing/lashuna-kalpa-rasnadi-taila-uttar-basti-artava-kshya.html
-   https://drnidhi.great-site.net/writing/library.json
-   https://drnidhi.great-site.net/writing/files/vomiting-in-pregnancy.pdf
+   https://www.drnidhi.net/
+   https://www.drnidhi.net/writing/
+   https://www.drnidhi.net/writing/lashuna-kalpa-rasnadi-taila-uttar-basti-artava-kshya.html
+   https://www.drnidhi.net/writing/library.json
+   https://www.drnidhi.net/writing/files/vomiting-in-pregnancy.pdf
+   https://www.drnidhi.net/sitemap.xml
+   https://www.drnidhi.net/rss.xml
    ```
-2. **Submit the sitemap** in Google Search Console → Sitemaps →
-   `https://drnidhi.great-site.net/sitemap.xml`
-3. **Check the structured data** at <https://search.google.com/test/rich-results> — every
-   work page should report as an academic article with no errors.
-4. **Tell Google the domain changed nothing** — the canonical URLs in the pages already
-   point at `https://drnidhi.great-site.net/`, so no redirects are needed.
-5. **Post the URL** in the university department page, on LinkedIn, and on WhatsApp status.
-6. **Upload the same PDFs to ResearchGate, Academia.edu and Zenodo** using
-   `writing/upload-kit/` — and put the canonical URL in every description, so each
-   upload points back here.
 
-## A note on the same content being live in two places
+2. The **Writing** tab in the header opens `/writing/` (it is the only nav link
+   that leaves the home page).
+3. `py writing/verify.py` reports **0 errors**.
+4. Submit `sitemap.xml` once in Google Search Console → Sitemaps.
+5. Check one work page at <https://search.google.com/test/rich-results> — it
+   should report a scholarly article with no errors.
 
-The same site is also published on GitHub Pages at
-<https://harshalsp07.github.io/DrNidhi_portfolio/>. That copy is useful as a fallback and
-as a second indexable surface, but the canonical URLs on every page point at
-`drnidhi.great-site.net`, so search engines will treat that as the single authoritative
-copy and will not treat the two as duplicates.
+## What must never be committed
+
+- `newdata/` — 7.2 GB of original source documents.
+- `.zenodo-token`, `.osf-token`, `.env` — API credentials.
+
+Both are already covered by `.gitignore`. The upload kit needs the tokens at run
+time; it reads them from those files and never writes them into the site.
+
+## Publishing the same works elsewhere
+
+`writing/upload-kit/` holds every field for every platform, already written to
+point back at `https://www.drnidhi.net`. Start with
+`writing/upload-kit/MASTER-UPLOAD-PLAN.md`, then use `upload-console.html` to
+click-to-copy each field. The rule is simple: wherever a work is uploaded, the
+description ends with its canonical `www.drnidhi.net/writing/...` URL, so every
+copy cites the original.
 """
 
 
 def main():
-    if os.path.exists(OUT):
-        shutil.rmtree(OUT)
+    os.makedirs(OUT, exist_ok=True)
+    with open(os.path.join(OUT, "DEPLOY.md"), "w", encoding="utf-8") as f:
+        f.write(DEPLOY_MD)
+    print("guide  :", os.path.join(OUT, "DEPLOY.md"))
+
+    if "--zip" not in sys.argv:
+        print("bundle : skipped (pass --zip to build deploy/site + DrNidhi_deploy.zip)")
+        return
+
+    if os.path.exists(STAGE):
+        shutil.rmtree(STAGE)
     os.makedirs(STAGE, exist_ok=True)
 
     for f in ROOT_FILES:
@@ -160,9 +158,6 @@ def main():
 
     copy_tree(os.path.join(ROOT, "writing"), os.path.join(STAGE, "writing"), skip=SKIP_DIRS)
 
-    with open(os.path.join(OUT, "DEPLOY.md"), "w", encoding="utf-8") as f:
-        f.write(DEPLOY_MD)
-
     zp = os.path.join(OUT, "DrNidhi_deploy.zip")
     with zipfile.ZipFile(zp, "w", zipfile.ZIP_DEFLATED) as z:
         for dp, dn, fn in os.walk(STAGE):
@@ -172,10 +167,9 @@ def main():
 
     n = sum(len(fn) for _, _, fn in os.walk(STAGE))
     size = sum(os.path.getsize(os.path.join(dp, n2)) for dp, _, fn in os.walk(STAGE) for n2 in fn)
-    print(f"deploy package: {n} files, {size/1024/1024:.1f} MB")
-    print(f"  folder : {OUT}\\site")
+    print(f"bundle : {n} files, {size/1024/1024:.1f} MB")
+    print(f"  folder : {STAGE}")
     print(f"  zip    : {zp}")
-    print(f"  guide  : {OUT}\\DEPLOY.md")
 
 
 if __name__ == "__main__":

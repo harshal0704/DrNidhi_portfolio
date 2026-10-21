@@ -21,43 +21,66 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Preloader Fade Out ---
+    // The overlay must never outlive the page. GSAP drives the fade, but a tween
+    // only advances while the tab is producing frames: a background tab, a
+    // throttled device or a failed CDN would otherwise leave the visitor staring
+    // at an opaque screen. So start the fade, and force-clear on a hard timer.
     let preloaderFaded = false;
-    const fadeOutPreloader = () => {
-        if (preloaderFaded) return;
-        preloaderFaded = true;
-        
-        if (preloader) {
-            if (gsapAvailable) {
-                gsap.to(preloader, {
-                    opacity: 0,
-                    duration: 0.6,
-                    ease: 'power2.out',
-                    onComplete: () => {
-                        preloader.style.visibility = 'hidden';
-                        preloader.style.display = 'none';
-                        preloader.classList.add('loaded');
-                        document.body.classList.add('page-loaded');
-                        playEntranceAnimations();
-                    }
-                });
-            } else {
-                preloader.style.opacity = '0';
-                preloader.style.transition = 'opacity 0.6s ease';
-                setTimeout(() => {
-                    preloader.style.visibility = 'hidden';
-                    preloader.style.display = 'none';
-                    preloader.classList.add('loaded');
-                    document.body.classList.add('page-loaded');
-                    playEntranceAnimations();
-                }, 600);
-            }
-        } else {
+    let entrancePlayed = false;
+
+    const playEntranceOnce = () => {
+        if (entrancePlayed) return;
+        entrancePlayed = true;
+        try {
             playEntranceAnimations();
+        } catch (err) {
+            /* the entrance is decorative; never let it block the page */
         }
     };
 
-    // Trigger preloader fade-out 400ms after DOM is ready
+    const clearPreloader = () => {
+        if (preloader) {
+            preloader.style.opacity = '0';
+            preloader.style.visibility = 'hidden';
+            preloader.style.display = 'none';
+            preloader.classList.add('loaded');
+            document.body.classList.add('page-loaded');
+        }
+        playEntranceOnce();
+    };
+
+    const fadeOutPreloader = () => {
+        if (preloaderFaded) return;
+        preloaderFaded = true;
+
+        if (!preloader) {
+            playEntranceOnce();
+            return;
+        }
+
+        if (!gsapAvailable) {
+            preloader.style.transition = 'opacity 0.6s ease';
+            preloader.style.opacity = '0';
+            setTimeout(clearPreloader, 600);
+            return;
+        }
+
+        try {
+            gsap.to(preloader, {
+                opacity: 0,
+                duration: 0.6,
+                ease: 'power2.out',
+                onComplete: clearPreloader
+            });
+        } catch (err) {
+            clearPreloader();
+        }
+    };
+
+    // Trigger the fade 400ms after DOM is ready, and force-clear 2s after that
+    // whatever the animation is doing.
     setTimeout(fadeOutPreloader, 400);
+    setTimeout(clearPreloader, 2000);
 
     // Fallback force-clear preloader if load event fires
     window.addEventListener('load', fadeOutPreloader);
@@ -321,67 +344,67 @@ document.addEventListener('DOMContentLoaded', () => {
     const adviceMap = {
         'AA': {
             title: 'Rhythm & Calm',
-            text: 'Dear sister, when the body feels stressed and out of cycle, Vata dosha is often seeking grounding. Focus on warm, cooked meals, daily self-massage (Abhyanga) with warm sesame oil, and gentle breathing. I approach hormonal health by soothing the nervous system first, helping your body rediscover its natural, rhythmic flow. You are not alone on this path.'
+            text: 'Stress and irregular periods often go together. Ayurveda reads this as Vata — the quality of movement and dryness in the body — asking to be settled down. Warm cooked meals, a daily oil massage with warm sesame oil, and slow breathing are the foundations. I usually start by calming the nervous system, because that is what the cycle responds to first.'
         },
         'AB': {
             title: 'Nourishment for Rhythm',
-            text: 'When cycles are irregular and stress is high, your endocrine system needs deep replenishment. Focus on nourishing herbs like Ashwagandha and Shatavari, and sip warm spiced almond milk. We will work together to build your Ojas (vital energy) and stabilize hormonal patterns gently.'
+            text: 'When periods are irregular and stress is high, the body needs building up, not stimulating. Herbs such as Ashwagandha and Shatavari, and warm spiced almond milk, are the usual starting points. The aim is to build what Ayurveda calls Ojas — your deep reserve of energy — so your cycle steadies on its own rather than being pushed.'
         },
         'AC': {
             title: 'Cooling Calm',
-            text: 'If stress is accompanied by heat or emotional swings, Pitta is rising. Soothe your fire with coconut water, meditation, and cooling herbs like Shatavari or aloe vera. We will guide your system to release accumulated tension and restore a peaceful inner climate.'
+            text: 'Stress that shows up as heat and mood swings usually points to Pitta being raised. Coconut water, meditation, and cooling herbs such as Shatavari or aloe vera help bring the temperature down. Expect this to feel less like pushing and more like letting go of pressure that has been building.'
         },
         'AD': {
             title: 'Light Flow',
-            text: 'When stress leaves you feeling sluggish, we need to clear stagnation while supporting your energy. Sip warm ginger water, engage in dynamic stretching, and focus on warm, light meals. Our path will focus on clearing blockages to let your life-force flow freely.'
+            text: 'When stress leaves you heavy and sluggish, the aim is to clear the stagnation without depleting you. Warm ginger water, some active stretching, and light warm meals help. The goal is to get things moving again so you feel like yourself.'
         },
         'BA': {
             title: 'Calm Fertility Prep',
-            text: 'Preparing for conception begins with calming the mind and grounding the body. A peaceful womb (Garbhashaya) is created through a calm nervous system. Focus on gentle yoga, sweet-grounding foods, and slowing down. Let us co-create a peaceful sanctuary for your future child.'
+            text: 'Preparing to conceive starts with settling the mind and steadying the body. Ayurveda links a calm nervous system to a healthy reproductive system, so gentle yoga, nourishing foods and a slower pace all belong here. It is not a race, and the groundwork matters more than the timing.'
         },
         'BB': {
             title: 'Nurturing Preconception (Beej Shuddhi)',
-            text: 'Conscious conception is like preparing fertile soil for a seed. Focus on nutrient-dense foods (ghee, dates, almonds, fresh organic milk) to purify the reproductive tissues (Shukra Dhatu). We will craft a tailored Beej Shuddhi (cleansing and strengthening) protocol to welcome new life with vibrant vitality.'
+            text: 'Think of it as preparing fertile soil. Good nutrition — ghee, dates, almonds, fresh milk — nourishes what Ayurveda calls Shukra Dhatu, the reproductive tissue. From there, Beej Shuddhi (cleansing and strengthening) is planned for you individually, for the three months before you try.'
         },
         'BC': {
             title: 'Cooling & Nurturing',
-            text: 'If you feel fatigued but also warm or irritable, we must cool the reproductive channels while nourishing them. Use rose water sprays, cooling herbs, and sweet fruits. We will focus on soothing any inflammation in the reproductive system to create a welcoming, temperate environment.'
+            text: 'Feeling tired but also warm or irritable means the reproductive system needs cooling and feeding at the same time. Rose water, cooling herbs and sweet fruits are useful, alongside less heat in the diet. This is about creating a comfortable, temperate internal environment.'
         },
         'BD': {
             title: 'Energy & Revitalization',
-            text: 'To welcome new life, we must clear away sluggishness (Ama) and awaken your reproductive vitality. Focus on warm herbal teas, light spices (cardamom, fennel), and moderate movement. We will focus on awakening your body\'s innate wisdom and vitality.'
+            text: 'Before trying to conceive, it helps to clear sluggishness first. Warm herbal teas, gentle warming spices like cardamom and fennel, and moderate movement get things going. This is usually the shortest part of preconception care, and it makes everything after it work better.'
         },
         'CA': {
             title: 'Graceful Transitions (Calm & Ground)',
-            text: 'Menopause is the sacred transition into a time of wisdom. When hot flashes and mood shifts arise, Vata and Pitta are fluctuating. Focus on grounding routines, cooling pranayama (Sheetali), and self-compassion. I am here to help you navigate this transition with grace, using herbs that cool the fire and ground the wind.'
+            text: 'Menopause is a shift, and the symptoms you notice — hot flushes, mood swings, disturbed sleep — usually come from Vata and Pitta fluctuating. Steady routines, cooling breathing exercises (Sheetali) and a little self-compassion help. There are also herbs that cool and ground, and they are worth trying.'
         },
         'CB': {
             title: 'Nourishing the Wise Self',
-            text: 'During life\'s major transitions, our vital reserves can feel depleted. Replenish your tissues with warm, moist foods, healthy fats like ghee, and adaptogenic herbs like Ashwagandha. We will design a program to preserve your bone health, skin luster, and vital juices.'
+            text: 'Major life stages can leave your reserves feeling thinner. Warm, moist food, healthy fats such as ghee, and adaptogenic herbs like Ashwagandha help rebuild. The aim is to protect your bone health, skin and energy for the years ahead, not just to get through the week.'
         },
         'CC': {
             title: 'Cooling the Fire',
-            text: 'When hot flashes and irritability dominate, Pitta is seeking release. Avoid spicy, sour, and fermented foods. Embrace cooling coconut, coriander infusions, and quiet reflection. We will work to clear excess heat from your blood (Rakta) and liver, cooling your body and mind.'
+            text: 'When hot flushes and irritability dominate, the usual starting point is to reduce what is heating you up: less spicy, sour and fermented food, and more cooling things like coconut, coriander drinks and quiet time. Ayurveda also looks at the blood and liver here, since heat often shows up in both.'
         },
         'CD': {
             title: 'Lightness in Transition',
-            text: 'If menopause makes you feel heavy, sluggish, or bloated, we need to gently kindle your digestive fire (Agni) without overheating it. Use mild spices like cumin and fennel, and enjoy warm, easily digestible meals. We will support your metabolism and clear accumulation during this shift.'
+            text: 'If menopause leaves you feeling heavy, slow or bloated, digestion usually needs gentle encouragement rather than a hard push. Mild spices like cumin and fennel, and warm meals that are easy to digest, help. Most people find the change gradual rather than sudden.'
         },
         'DA': {
             title: 'Calming Detox',
-            text: 'When feeling heavy, we must cleanse gently without depleting your nervous system. Sip warm water with lemon, practice gentle movement, and prioritize deep rest. We will focus on a gentle, soothing detoxification that clears toxins while leaving you feeling secure and grounded.'
+            text: 'When you feel heavy, a harsh cleanse will leave you worse. Gentle is the point: warm water with lemon, easy movement, and proper rest. The aim is to clear what has accumulated without draining your nervous system in the process.'
         },
         'DB': {
             title: 'Nourishing Revitalization',
-            text: 'If you feel sluggish and depleted, simple fasting or harsh detox will only exhaust you. We need Shodhana (gentle clearing) followed by immediate Rasayana (rejuvenation). Focus on warm mung soup, light spices, and restful sleep. Let us design a path that cleanses your body while restoring deep strength.'
+            text: 'If you are sluggish and depleted, fasting or a harsh detox will only exhaust you further. Ayurveda pairs gentle clearing (Shodhana) with immediate rebuilding (Rasayana), in that order. Warm mung soup, light spices and proper sleep are the basics — and they are genuinely enough to start with.'
         },
         'DC': {
             title: 'Cooling Release',
-            text: 'If sluggishness is paired with acidity or skin rashes, toxins are mixed with heat. Cleanse with cooling green juices, cucumber, mint, and bitter herbs. We will focus on purifying the blood and liver, clearing sluggishness while cooling your entire system.'
+            text: 'Sluggishness together with acidity or skin rashes usually means heat and stagnation together. Cooling foods like cucumber, mint and green drinks, with bitter herbs, help clear both. This pattern responds better to cooling and clearing than to stimulating.'
         },
         'DD': {
             title: 'Awakening & Rejuvenation',
-            text: 'Feeling heavy and sluggish suggests the presence of Ama (undigested metabolic toxins) and elevated Kapha. Kindle your digestive fire with dry ginger, black pepper, and warm foods. Engage in active, energizing exercise. We will design a custom home-cleanse to revitalize your metabolism and restore your light, joyful nature.'
+            text: 'Feeling heavy and slow usually points to Ama — the residue Ayurveda associates with poor digestion — along with raised Kapha. Dry ginger, black pepper and warm food help get the digestive fire going again, and lively movement does the same for the body. Worth doing slowly, over weeks rather than days.'
         }
     };
 
@@ -565,20 +588,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         ease: 'power2.in',
                         onComplete: () => {
                             mainNavUl.classList.remove('open');
-                            menuToggleBtn.innerHTML = '☰';
+                            setMenuIcon(false);
                             menuToggleBtn.setAttribute('aria-expanded', 'false');
                             document.body.style.overflow = '';
                         }
                     });
                 } else {
                     mainNavUl.classList.remove('open');
-                    menuToggleBtn.innerHTML = '☰';
+                    setMenuIcon(false);
                     menuToggleBtn.setAttribute('aria-expanded', 'false');
                     document.body.style.overflow = '';
                 }
             } else {
                 mainNavUl.classList.add('open');
-                menuToggleBtn.innerHTML = '×';
+                setMenuIcon(true);
                 menuToggleBtn.setAttribute('aria-expanded', 'true');
                 document.body.style.overflow = 'hidden';
                 if (gsapAvailable) {
@@ -591,49 +614,76 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Mobile navigation links close menu ---
+    // --- Shared helpers for in-page navigation ---
+    // The button holds a span so the glyph can be swapped without touching the
+    // accessible name.
+    const setMenuIcon = (open) => {
+        if (!menuToggleBtn) return;
+        const icon = menuToggleBtn.querySelector('.menu-icon') || menuToggleBtn;
+        icon.textContent = open ? '×' : '☰';
+        menuToggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+
+    const closeMobileMenu = () => {
+        if (!mainNavUl || !mainNavUl.classList.contains('open')) return;
+        mainNavUl.classList.remove('open');
+        setMenuIcon(false);
+        document.body.style.overflow = '';
+    };
+
+    // Resolve "#section" to an element. Returns null for anything that is not a
+    // real, existing anchor - a guard, because `document.querySelector("about/")`
+    // throws a SyntaxError and would kill the whole click handler.
+    const resolveHash = (href) => {
+        if (!href || href.charAt(0) !== '#' || href.length < 2) return null;
+        try {
+            return document.querySelector(href);
+        } catch (err) {
+            return null;
+        }
+    };
+
+    const scrollToTarget = (targetEl, extraOffset) => {
+        const navHeight = mainNav ? mainNav.offsetHeight : 0;
+        if (lenis) {
+            lenis.scrollTo(targetEl, { offset: -(navHeight + extraOffset) });
+        } else {
+            const targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight - extraOffset;
+            window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+        }
+    };
+
+    // --- Navigation links ---
+    // Only intercept real in-page anchors. A link to another document (writing/,
+    // rss.xml, an external site) must be left alone so the browser navigates.
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href');
-            const targetEl = document.querySelector(targetId);
-            
-            if (mainNavUl.classList.contains('open')) {
-                mainNavUl.classList.remove('open');
-                menuToggleBtn.innerHTML = '☰';
-                menuToggleBtn.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-            }
+            const href = link.getAttribute('href');
+            const targetEl = resolveHash(href);
 
-            if (targetEl) {
-                const navHeight = mainNav ? mainNav.offsetHeight : 0;
-                const offset = targetId === '#hero' ? 0 : 30;
-                if (lenis) {
-                    lenis.scrollTo(targetEl, { offset: -(navHeight + offset) });
-                } else {
-                    const targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight - offset;
-                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
-                }
-            }
+            closeMobileMenu();
+
+            if (!targetEl) return; // not an in-page anchor - let the browser handle it
+
+            e.preventDefault();
+            scrollToTarget(targetEl, href === '#hero' ? 0 : 30);
         });
     });
 
     // --- General Smooth Links Scroll (not in nav) ---
     document.querySelectorAll('a[href^="#"]:not(#mainNav ul li a)').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
-            const href = anchor.getAttribute('href');
-            if (href.length > 1 && document.querySelector(href)) {
-                e.preventDefault();
-                const targetEl = document.querySelector(href);
-                const navHeight = mainNav ? mainNav.offsetHeight : 0;
-                if (lenis) {
-                    lenis.scrollTo(targetEl, { offset: -(navHeight + 30) });
-                } else {
-                    const targetPosition = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight - 30;
-                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
-                }
-            }
+            const targetEl = resolveHash(anchor.getAttribute('href'));
+            if (!targetEl) return;
+            e.preventDefault();
+            scrollToTarget(targetEl, 30);
         });
+    });
+
+    // The mobile menu should also close if the viewport grows past the
+    // breakpoint while it is open, otherwise the page stays scroll-locked.
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) closeMobileMenu();
     });
 
     // --- FAQ Accordions ---

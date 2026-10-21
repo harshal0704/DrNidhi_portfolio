@@ -1,6 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 """
-Builds the "Publications & Academic Works" section of drnidhi.great-site.net
+Builds the "Publications & Academic Works" section of www.drnidhi.net
 from writing/catalog.py.
 
 Outputs
@@ -226,7 +226,6 @@ HEAD_TPL = """<!DOCTYPE html>
       <li><a href="{SITE}/">Home</a></li>
       <li><a href="{SITE}/#about">About</a></li>
       <li><a href="{SITE}/#services">Services</a></li>
-      <li><a href="{SITE}/#professional-journey">Journey</a></li>
       <li><a href="{SITE}/writing/" aria-current="page">Writing</a></li>
       <li><a href="{SITE}/#contact">Contact</a></li>
     </ul>
@@ -501,31 +500,28 @@ def person_jsonld():
 
 
 def patch_index():
-    """The root page stays as it was.
+    """Guarantee the root page links to /writing/.
 
-    The only thing this function does is guarantee a discreet link from the root page
-    to /writing/ — without it the page would be unreachable. Nothing else about the
-    landing page is altered, and no research content is injected into it.
+    The landing page owns its own header, Person JSON-LD and publications
+    teaser; none of that is rewritten here. The only repair this makes is
+    putting the Writing nav item back if it has gone missing, because without
+    it the sub-site is unreachable from the site itself.
     """
     path = os.path.join(ROOT, "index.html")
-    with open(path, encoding="utf-8") as f:
+    # newline="" keeps CRLF intact - a rebuild must not churn the whole file.
+    with open(path, encoding="utf-8", newline="") as f:
         html_src = f.read()
     original = html_src
 
-    # Remove the research block if it is still present from an earlier build.
-    html_src = re.sub(r"\n *<!-- PUBLICATIONS_SECTION_START -->.*?<!-- PUBLICATIONS_SECTION_END -->\n",
-                      "\n", html_src, flags=re.S)
-    html_src = re.sub(r"\n *<!-- PUBLICATIONS_JSONLD_START -->.*?<!-- PUBLICATIONS_JSONLD_END -->\n",
-                      "\n", html_src, flags=re.S)
-
-    # A single nav link to the writing page.
     if 'href="writing/"' not in html_src:
+        nl = "\r\n" if "\r\n" in html_src else "\n"
         html_src = html_src.replace(
             '<li><a href="#faq">FAQ</a></li>',
-            '<li><a href="writing/">Writing</a></li>\n                <li><a href="#faq">FAQ</a></li>', 1)
+            '<li><a href="writing/" class="nav-writing">Writing</a></li>' + nl +
+            '                <li><a href="#faq">FAQ</a></li>', 1)
 
     if html_src != original:
-        with open(path, "w", encoding="utf-8") as f:
+        with open(path, "w", encoding="utf-8", newline="") as f:
             f.write(html_src)
         return True
     return False
@@ -620,7 +616,6 @@ def render_index():
       <li><a href="{SITE}/">Home</a></li>
       <li><a href="{SITE}/#about">About</a></li>
       <li><a href="{SITE}/#services">Services</a></li>
-      <li><a href="{SITE}/#professional-journey">Journey</a></li>
       <li><a href="{SITE}/writing/" aria-current="page">Writing</a></li>
       <li><a href="{SITE}/#contact">Contact</a></li>
     </ul>
