@@ -243,7 +243,7 @@ FOOT_TPL = """
       <p><a href="mailto:{email}">{email}</a> &middot; <a href="tel:{phone}">{phone}</a></p>
     </div>
     <div>
-      <p><a href="{SITE}/writing/">All writing</a> &middot; <a href="{SITE}/writing/library.json">Catalogue JSON</a> &middot; <a href="{SITE}/rss.xml">RSS feed</a></p>
+      <p><a href="{SITE}/writing/">All writing</a> &middot; <a href="{SITE}/writing/library.json">Catalogue JSON</a> &middot; <a href="{SITE}/rss.xml">RSS feed</a> &middot; <a href="#">Back to top &uarr;</a></p>
       <p>All works on this page are published by the author for open access and are free to read and share.<br>
       &copy; {year} Dr. Nidhi Patel. Content licensed CC BY 4.0 unless otherwise noted.</p>
     </div>
@@ -544,13 +544,16 @@ def render_index():
                            w.get("venue", ""), " ".join(w.get("keywords", [])), w.get("hook", "")])
         chips = "".join(f'<span class="chip">{esc(c)}</span>' for c in
                          [w.get("type_label", w["type"]), str(w.get("year", ""))])
+        doi_chip = (f'<a class="chip chip-doi" href="https://doi.org/{esc(w["doi"])}" '
+                    f'target="_blank" rel="noopener" '
+                    f'title="DOI: {esc(w["doi"])}">DOI &nearr;</a>') if w.get("doi") else ""
         cards.append(f"""
         <article class="work-card" data-work-card data-type="{esc(w['type'])}" data-search="{esc(search)}">
           <span class="work-type">{esc(w.get('type_label', w['type']))}</span>
           <h3><a href="{w['slug']}.html">{esc(w['title'])}</a></h3>
           <p>{esc(w['hook'])}</p>
-          <div class="work-meta">{chips}</div>
-          <a class="work-cta" href="{w['slug']}.html">Read &amp; download &rarr;</a>
+          <div class="work-meta">{chips}{doi_chip}</div>
+          <a class="work-cta" href="{w['slug']}.html">Read &amp; download <span class="cta-arrow">&rarr;</span></a>
         </article>""")
 
     filters = ['<button class="filter-btn active" data-filter="all" aria-pressed="true">All works</button>']
@@ -564,15 +567,17 @@ def render_index():
     feat_html = ""
     if featured:
         items = "".join(
-            f'<li><a href="{w["slug"]}.html">{esc(w["title"])}</a> '
-            f'<span style="color:var(--text-soft)"> — {esc(w.get("type_label",""))}, {w.get("year","")}</span></li>'
-            for w in featured)
+            f'<li{" class=\"featured-lead\"" if i == 0 else ""}>'
+            f'<span class="feat-num" aria-hidden="true">{i + 1:02d}</span>'
+            f'<a href="{w["slug"]}.html">{esc(w["title"])}</a>'
+            f'<span class="feat-meta"> {esc(w.get("type_label",""))} &middot; {w.get("year","")}</span></li>'
+            for i, w in enumerate(featured))
         feat_html = f"""
         <section class="pub-section">
           <div class="section-label">Featured</div>
           <h2 class="pub-h2">Start here</h2>
           <div class="rule"></div>
-          <ul class="related-list">{items}</ul>
+          <ul class="related-list featured-list">{items}</ul>
         </section>"""
 
     return f"""<!DOCTYPE html>
@@ -631,6 +636,7 @@ def render_index():
     are working on the same questions. So here is everything I have written: my M.S. (Ayurveda) dissertation on
     Uttar Basti for scanty periods, a published article on Pumsavana Karma, abstracts from conferences, and
     notes from my seminars. Read them in full, download them, and use them.</p>
+    <p class="pub-sign" aria-hidden="true">Dr. Nidhi Patel</p>
     <div class="pub-stats">
       <div class="pub-stat"><b>{len(WORKS)}</b><span>Pieces</span></div>
       <div class="pub-stat"><b>{sum(1 for w in WORKS if w['type']=='Seminar')}</b><span>Seminar notes</span></div>
@@ -655,7 +661,7 @@ def render_index():
     <div class="work-grid">
       {''.join(cards)}
     </div>
-    <p id="pubEmpty" style="display:none;color:var(--text-soft)">Nothing matches that search. Try a broader word such as
+    <p id="pubEmpty" class="empty-state" style="display:none">Nothing matches that search. Try a broader word such as
     &ldquo;Ayurveda&rdquo;, &ldquo;fertility&rdquo;, &ldquo;labour&rdquo; or &ldquo;periods&rdquo;.</p>
   </section>
 
