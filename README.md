@@ -3,7 +3,7 @@
 Personal website and academic publication record of **Dr. Nidhi Sanjay Patel** (B.A.M.S., M.S. Ayurveda —
 Prasuti Tantra & Stree Roga), Assistant Professor at Uka Tarsadia University (UTU), Bardoli, Gujarat.
 
-Live site: **https://drnidhi.great-site.net/** — hosted on GitHub Pages.
+Live site: **https://www.drnidhi.net/**
 
 ![Alt text describing the image](./web.png)
 
@@ -16,7 +16,7 @@ Live site: **https://drnidhi.great-site.net/** — hosted on GitHub Pages.
 | `index.html` | The single-page website. Also carries the `Person` JSON-LD and the Publications preview block. |
 | `style.css` | Site styles (plus the `#publications` block styles). |
 | `script.js` | Navigation, scroll-reveal, compass widget, dinacharya tabs, FAQ. |
-| `publications/` | The full publication library — see below. |
+| `writing/` | The full publication library — see below. |
 | `sitemap.xml` | XML sitemap, 22 URLs. |
 | `robots.txt` | Allows search engines, AI answer engines and academic crawlers. |
 | `rss.xml` | RSS feed of the publication record. |
@@ -26,12 +26,12 @@ Live site: **https://drnidhi.great-site.net/** — hosted on GitHub Pages.
 
 ## The Publications library
 
-`publications/` is a complete, self-contained open-access publication site. Every work authored
+`writing/` is a complete, self-contained open-access publication site. Every work authored
 or presented by Dr. Nidhi Patel is published there in full, with metadata, citations and a
 downloadable PDF.
 
 ```
-publications/
+writing/
 ├── index.html            Landing page — searchable, filterable catalogue
 ├── library.json          Machine-readable catalogue of all 20 works
 ├── <slug>.html           One page per work (20 pages)
@@ -67,27 +67,40 @@ records, admission letters, score cards and other personal documents.
 ### Rebuilding
 
 ```bash
-py publications/build.py       # pages, PDFs, sitemap.xml, robots.txt, rss.xml, index.html patch
-py publications/build_kit.py   # upload-kit/ (CSV per platform + guides)
-py publications/verify.py      # validation — should report 0 errors
+py writing/build.py       # pages, PDFs, sitemap.xml, robots.txt, rss.xml, index.html patch
+py writing/build_kit.py   # upload-kit/ (CSV per platform + guides)
+py writing/verify.py      # validation — should report 0 errors
 ```
 
 Requires Python 3, `pypdf` (`py -m pip install pypdf`) and Google Chrome (for PDF rendering).
 
 ### Upload kit
 
-`publications/upload-kit/` contains everything needed to publish the same work on other
+`writing/upload-kit/` contains everything needed to publish the same work on other
 platforms, with the exact title, abstract, keywords, description and citation for each:
 
 | File | What it gives you |
 |---|---|
-| `UPLOAD-GUIDE.md` | Step-by-step instructions for each platform, in the right order |
+| `MASTER-UPLOAD-PLAN.md` | **Start here.** Every platform with its live signup/upload link, ranked by impact, plus the patient-facing track, the mistakes to avoid and a 14-day sprint |
+| `upload-console.html` | Open in a browser: every field with a copy button, one tab per platform, progress saved locally |
+| `TRACKER.csv` | 105 individual upload actions with status, public URL and DOI columns |
+| `PROFILE-COPY.md` | Bios at every character limit, service descriptions, FAQ, review-request scripts, social bios, post ideas |
+| `zenodo_deposit.py` | Bulk deposit to Zenodo and mint DOIs (`--dry-run` first, `--publish` to mint) |
+| `osf_deposit.py` | Create an OSF project and upload all 20 PDFs (`--publish` to make it public) |
+| `GOOGLE-BUSINESS-PROFILE.md` | The patient-acquisition setup: claiming/creating the listing, copy-paste fields, photos, verification, review script |
+| `UPLOAD-GUIDE.md` | Step-by-step instructions for each academic platform, in the right order |
 | `ORDER-RECOMMENDATION.md` | Which work to upload first, and which audience each platform reaches |
 | `HOOKS.md` | The hook strategy — content hooks, technical hooks, citation hooks, link hooks, and how to measure them |
 | `MANIFEST.json` | Every work, every platform field, machine-readable |
 | `researchgate.csv` `academia.csv` `academia_india.csv` `scribd.csv` `slideshare.csv` `zenodo.csv` `osf.csv` `scholar.csv` `doaj.csv` | One row per work, ready to paste |
 
 Fill in the `Public URL (after upload)` column as you go, so the kit stays auditable.
+
+Regenerate the console and tracker after any catalogue change:
+
+```bash
+py writing/build_console.py
+```
 
 ---
 
@@ -105,5 +118,5 @@ Fill in the `Public URL (after upload)` column as you go, so the kit stays audit
 
 ## Stack
 
-Vanilla HTML, CSS and JavaScript. No build step for the site itself — `publications/build.py` is a
+Vanilla HTML, CSS and JavaScript. No build step for the site itself — `writing/build.py` is a
 one-off content pipeline, not a bundler.

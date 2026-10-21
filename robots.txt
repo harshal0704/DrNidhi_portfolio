@@ -1,7 +1,7 @@
-# robots.txt for https://drnidhi.great-site.net
+# robots.txt for https://www.drnidhi.net
 User-agent: *
 Allow: /
-Disallow: /publications/print/
+Disallow: /writing/print/
 
 # Crawl the whole publication library at a gentle pace.
 Crawl-delay: 1
@@ -27,4 +27,4 @@ Allow: /
 User-agent: academic crawlers
 Allow: /
 
-Sitemap: https://drnidhi.great-site.net/sitemap.xml
+Sitemap: https://www.drnidhi.net/sitemap.xml

@@ -8,6 +8,11 @@ __pycache__/
 *.pyc
 _preview_pub.html
 
+# Secrets — never commit
+.zenodo-token
+.osf-token
+.env
+
 # Deploy staging folder (the zip is committed)
 deploy/site/
 
